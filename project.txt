@@ -1,0 +1,212 @@
+The Fall 2013 project is to create code to play the board game, Stratego.
+
+The majority of points (85%) will be awarded for the correct underlying data structures and their handling. The game code itself is only worth 15% of the total points.
+
+While some of the underlying implementation is at your discretion, the Board class must be handled as a graph of nodes.
+
+Board will have a single Piece object that refers to the piece in the top left corner of the Board. By using N, S, W, E references in each Piece, all locations on the Board can be discovered.
+
+Goals Timeline:
+	October:
+		Week 1:	Review assignment and prepare specification questions.
+		Week 2:	Build Piece class, Location class
+		Week 3-4: Create Board class and initialize it with a bunch of blank Piece objects.
+	November:
+		Week 1:	Create GamePiece class and place onto Board.
+		Week 2: Handle moving GamePieces on the Board and interactions between GamePieces.
+		Week 3: Army class and management of player GamePieces. Barrier class and placement on Board. 
+		Week 4: Organize Game rules.
+
+	
+
+
+
+
+Descriptions:
+Class Piece:
+	This is the primary Piece object and other Piece-like objects inherit from this.
+	Members:
+		private char type:		The "rank", "type" of a piece. (Refer to Stratego rules for this).
+		private String team:		The "team" the piece belongs to. We limit this to 4 characters in length.
+		private Piece N, S, W, E:	References to adjacent Pieces.
+	Methods:
+		Piece():			Default constructor.
+		Piece(Piece);			Copy constructor.
+		String[] getOutput();		Creates pretty print output of Piece. Will be provided.
+		String toString();		Basic toString, use this mostly for debugging.
+		boolean equals(Piece);		Equality method.
+		boolean isMoveValid(Location, Location);
+						Returns false. Generic Pieces don't move.
+		int interact(Piece other);	Returns -1. Generic Pieces don't interact.
+	Accessors:
+		getN(), getS(), getW(), getE()
+		getType(), getTeam()
+	Mutators:
+		setN(Piece), setS(Piece), setW(Piece), setE(Piece)
+		setType(char)
+		setTeam(String)			Limits Team to 4 characters.
+
+
+Class GamePiece extends Piece:
+	This represents an actual Stratego piece.
+	Constants:
+		int WIN;			These are results from method interact.
+		int LOSE;
+		int TIE;
+		int ERROR = -1;
+	Methods:
+		GamePiece();			From super.
+		GamePiece(GamePiece);		From super.
+		GamePiece(char, String);	Explicitly create a GamePiece using inherited mutators.
+		boolean isMoveValid(Location, Location);
+						Returns true/false if the move is valid, only handles if the GamePiece could move to that location or not.
+						Handling going out of bounds of the board, moving too far, moving into barriers or other pieces is handled elsewhere.
+						A piece can not move to its own location.
+						'F'lags and 'B'ombs can not move.
+						All pieces can move to an adjacent location.
+						The Scout ('9') can move across its row or column.
+		int interact(GamePiece);	Wrapper for GamePiece::interact(Piece)
+		int interact(Piece);		Determines the result of this Piece interacting with another piece (basically, if it moves into another location).
+						Returns a result as defined by the constants of this class.
+						Interactions do not occur with pieces of the same Team, return ERROR.
+						'F'lags and 'B'ombs can not start an interaction (Return ERROR).
+						Attempting to interact with a Barrier ('#') returns ERROR.
+						Interacting with a 'F'lag is always a WIN.
+						Interacting with a 'B'omb is always a LOSE, unless the current piece is a Miner ('8').
+						Interacting with the same type is a TIE.
+						A 'S'py only WINs if it interacts with a '1'. A '1' interacting with a 'S'py always WINs.
+						The lowest value type WINs: '1' WINs against '2'. '3' LOSEs against '2'.
+							However, a 'S'py is essentially treated as a '10'. Even a Scout ('9') WINs against it.
+		String toString();		Override toString, use this mostly for debugging.
+
+
+
+
+Class Barrier extends Piece:
+	This represents an a barrier on the Board
+	Constants:
+		int ERROR = -1;			Same as GamePiece::ERROR
+	Methods:
+		Barrier();			From super but sets type to '#'.
+		Barrier(char, String);		Ignores values, wrapper for Barrier::Barrier().
+		boolean isMoveValid(Location, Location);
+						Returns false, Barriers can not move.
+		int interact(Piece);		Returns ERROR. Barriers can not interact.
+		String[] getOutput();		Creates pretty print output of Piece. Will be provided.
+		String toString();		Override toString, use this mostly for debugging.
+
+
+	
+Class Location:
+	Handles (x,y) organization on a grid.
+	Members:
+		int x,y;			The (x,y) coordinates of the Location.
+		Location();			Default (0,0).
+		Location(Location);		Copy constructor.
+		Location(int, int);		Explicit value constructor.
+		boolean isAdjacent(Location);	Returns if the Location would be adjacent to the current Location.
+		boolean sameRow(Location);	Returns if the Location is in the samw row as the current Location.
+		boolean sameColumn(Location);	Returns if the Location is in the samw column as the current Location.
+		String toString();		Basic toString, use this mostly for debugging.
+		boolean equals(Piece);		Equality method.
+	Accessors:
+		getX(), getY()
+	Mutators:
+		setX(int), setY(int)
+		
+
+Class Army:
+	This is an organization class used to retain information regarding what pieces you have left to place on the Board at the beginning of the game.
+	Members:
+		int[] armies;			An array that contains how many pieces we have left of each type.
+						[0] -> Flags, [10] -> Spy, [11] -> Bombs
+						[1] -> 1, [2] -> 2, ... [9] -> 9
+						This will always have 12 elements.
+		int capacity;			The original number of pieces available (when the Army was constructed).
+						This will typically be 40, but we will provide options to start with less than normal pieces.
+		int remaining;			The number of pieces not yet placed.
+	Methods:
+		Army();				Default constructor setting capacity and remaining to 40.
+						There are
+							1 Flags
+							1 '1'
+							1 '2'
+							2 '3's
+							3 '4's
+							4 '5's, '6's and '7's
+							5 '8's
+							8 '9's
+							1 Spy
+							6 Bombs
+		Army(int[])			Explicit constructor: Creates an Army using the values from the given array.
+						Must set capacity and remaining based on the array.
+						The array must have 12 elements.
+		boolean deallocatePiece(String);
+						Wrapper for Army::deallocatePiece(int)
+		boolean deallocatePiece(char);	Wrapper for Army::deallocatePiece(int)
+		boolean deallocatePiece(int);	Puts a piece back into the Army (removed from the Board)
+		boolean allocatePiece(String);	Wrapper for Army::allocatePiece(int)
+		boolean allocatePiece(char);	Wrapper for Army::allocatePiece(int)
+		boolean allocatePiece(int);	Gets a piece from the Army, if it is not available, return false.
+		int translateRank(String);	Wrapper for Army::translateRank(char)
+		int translateRank(char);	Converts char reference to index that can be used for our internal array.
+		String toString();		Displays all pieces. Will be provided.
+		String getPieceList();		Displays all available pieces for a requester. Will be provided.
+	Accessors:
+		getRemaining(), getCapacity();
+
+
+class Board:
+	Handles all Pieces on the Board.
+	Members:
+		Piece first;			The Piece in the top left corner, location (0,0).
+		int height, width;		The dimensions of the board.
+		Board();			Default constructor.
+						You may enforce height and width to be 10 here.
+						Must create an empty 10x10 Board filled with Piece objects.
+						All linkages must be satisfied here.
+		boolean setPiece(Piece, Location);
+						Wrapper for Board::setPiece(Piece, int, int)
+		boolean setPiece(Piece, int, int);
+						Puts a Piece at the location specified.
+						Must repair links to adjacent pieces.
+						A Piece can not be placed over a Barrier.
+		Piece getPiece(Location);	Wrapper for Board::getPiece(int, int)
+		Piece getPiece(int, int);	Returns the piece at the specified location.
+						Must start from "first" and find the Piece.
+		String toString();		Wrapper for Board::getOutput("hide");
+		String getOutput();		Wrapper for Board::getOutput("hide");
+		String getOutput(String);	Pretty Prints the Board. Will be provided.
+		String[] getOutputHelper(String);
+						Helper for Board pretty print. Will be provided.
+
+
+A Game.class file can be provided for testing.
+The specifications for the Game class are not strictly defined. However, I will provide the structure of how I wrote it.
+
+Class Game
+	Members:
+		static String status;		Last turn status of the Game.
+						Requires, but does not enforce, that the Game only exists once.
+	Methods:
+		void setBarriers(Board);	Places Barriers onto the Board.
+		void defaultSet(Board, String);	Defaultly places GamePieces onto a new Board. For testing help.
+		boolean handleTurn(Board, int);	Provides Menu for user interaction on the specified "turn" of the Game.
+						Returns true if game continues, false if game has ended.
+		int handleMove(Board, String);	Provides sub-menu for user interaction for selecting and moving a GamePiece.
+						Returns -1 if error.
+						Returns 0 if move successful.
+						Returns 1 if move ends the game.
+						Updates Game::status where appropriate.
+		void placePieces(Board, Army, String);
+						Allows user of the specified "team" to place GamePieces, Remove GamePieces, View Board, View Army and Confirm.
+		int placeHandler(Board, Army, String);
+						User interaction when actually trying to place a GamePiece onto the Board.
+		int removeHandler(Board, Army, String);
+						User interaction when actually trying to remove a GamePiece from the Board.
+		String outputArmy(Army, String);
+						Wrapper for Army::toString();
+						Since Army is "team" agnostic, this method prepends the resulting String with: team + "'s Remaining Armies\n";
+		boolean saveFile(Board, int);	Saves the Board state and "turn" into a text file.
+	Static Methods:
+		void clear();			System.out.print("\033[" + "2J");
