@@ -1,88 +1,144 @@
+// David Gully
+// Valdosta State University
+// CS 3410 Data Structures, Dr. Loew
+// Stratego Project
+// November 26, 2013
+
 public class Piece
 {
-	public Piece()
-	{
-	}
+    private char type;
+    private String team;
+    Piece N = null;
+    Piece S = null;
+    Piece E = null;
+    Piece W = null;
+    
+    public Piece()
+    {
+	type = ' ';
+	team = " ";
+    }
 
-	public Piece(Piece source)
-	{
-	}
+    public Piece(Piece source)
+    {
+	type = source.getType();
+	team = source.getTeam();
+    }
 
-	public Piece getN()
-	{
-	}
+    public Piece getN()
+    {
+	return N;
+    }
 
-	public Piece getS()
-	{
-	}
+    public Piece getS()
+    {
+	return S;
+    }
+    
+    public Piece getE()
+    {
+	return E;
+    }
 
-	public Piece getW()
-	{
-	}
+    public Piece getW()
+    {
+	return W;
+    }
 
-	public Piece getE()
-	{
-	}
+    public void setN(Piece adjacent)
+    {
+	N = adjacent;
+    }
 
-	public void setN(Piece adjacent)
-	{
-	}
+    public void setS(Piece adjacent)
+    {
+	S = adjacent;
+    }
+    
+    public void setE(Piece adjacent)
+    {
+	E = adjacent;
+    }
 
-	public void setS(Piece adjacent)
-	{
-	}
+    public void setW(Piece adjacent)
+    {
+	W = adjacent;
+    }
 
-	public void setW(Piece adjacent)
-	{
-	}
+    public char getType()
+    {
+	return type;
+    }
 
-	public void setE(Piece adjacent)
-	{
-	}
+    public String getTeam()
+    {
+	return team;
+    }
 
-	public char getType()
-	{
-	}
+    public void setType(char newType)
+    {
+	type = newType;
+    }
 
-	public String getTeam()
+    public void setTeam(String newTeam)
+    {
+	if((newTeam != null) && (newTeam.length() < 5))
 	{
+	    if(Character.toUpperCase(newTeam.charAt(0)) == 'R')
+	    {
+		team = "Red";
+	    }
+	    else if(Character.toUpperCase(newTeam.charAt(0)) == 'B')
+	    {
+		team = "Blue";
+	    }
+	    else if(newTeam.charAt(0) == ' ')
+	    {
+		team = " ";
+	    }
+	    else
+	    {
+		System.out.println("\nError in team assignment.");
+	    }
 	}
+    }
 
-	public void setType(char newType)
-	{
-	}
+    public String[] getOutput()
+    {
+	    String[] retval = new String[4];
+	    retval[0] = team;
+	    while(retval[0].length() < 4)
+	    {
+		    retval[0] = retval[0] + " ";
+	    }
+	    retval[1] = "    ";
+	    retval[2] = "  " + type + " ";
+	    retval[3] = "    ";
+	    return retval;
+    }
 
-	public void setTeam(String newTeam)
-	{
-	}
+    public boolean isMoveValid(Location start, Location stop)
+    {
+	return false;
+    }
 
-	public String[] getOutput()
+    public int interact(Piece other)
+    {
+	return -1;
+    }
+    
+     public boolean equals(Piece rhs)
+    {
+	if(rhs.getType() == type)
 	{
-		String[] retval = new String[4];
-		retval[0] = team;
-		while(retval[0].length() < 4)
-		{
-			retval[0] = retval[0] + " ";
-		}
-		retval[1] = "    ";
-		retval[2] = "  " + type + " ";
-		retval[3] = "    ";
-		return retval;
+	    return true;
 	}
-
-	public String toString()
-	{
-	}
-
-	public boolean equals(Piece rhs)
-	{
-	}
-
-	public boolean isMoveValid(Location start, Location stop)
-	{
-	}
-
-	public int interact(Piece other)
-	{
-	}
+	return false;
+    }
+    
+    @Override
+     public String toString()
+    {
+	return "Type: " + type + "\nTeam: " + team;
+    }
 }
