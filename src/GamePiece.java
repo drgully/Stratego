@@ -30,7 +30,7 @@ public class GamePiece extends Piece
     @Override
     public boolean isMoveValid(Location start, Location stop)
     {
-	if(start != stop && super.getType() != 'F' && super.getType() != 'B')
+	if(start.equals(stop) && super.getType() != 'F' && super.getType() != 'B')
 	{
 	    return true;
 	}

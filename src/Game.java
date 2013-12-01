@@ -304,11 +304,6 @@ public class Game
 	    System.out.print("\nInvalid move attempt. ");
 	    return -1;
 	}
-	if(start.equals(stop))
-	{
-	    System.out.print("\nCannot capture own piece. ");
-	    return -1;
-	}
 	if(theBoard.getPiece(start).getType() == '9')
 	{
 	    if(!start.sameRow(stop))
@@ -323,12 +318,12 @@ public class Game
 	    int xStop = stop.getX();
 	    int yStart = start.getY();
 	    int yStop = stop.getY();
-	    if(start.getX() > stop.getX())
+	    if(xStart > xStop)
 	    {
 		xStart = stop.getX();
 		xStop = start.getX();
 	    }
-	    if(start.getY() > stop.getY())
+	    if(yStart > yStop)
 	    {
 		yStart = stop.getY();
 		yStop = start.getY();
