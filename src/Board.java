@@ -92,6 +92,7 @@ public class Board
         return getOutput("hide");
     }
 
+    @Override
     public String toString()
     {
         return getOutput("hide");
