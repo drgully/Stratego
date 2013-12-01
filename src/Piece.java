@@ -98,7 +98,7 @@ public class Piece
 	    }
 	    else
 	    {
-		System.out.println("\nError in team assignment.");
+		System.out.println("\nError in team assignment. ");
 	    }
 	}
     }

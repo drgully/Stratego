@@ -93,10 +93,4 @@ public class GamePiece extends Piece
 	}
 	return ERROR;
     }
-
-    @Override
-    public String toString()
-    {
-	return "";
-    }
 }
