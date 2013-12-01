@@ -49,7 +49,7 @@ public class Game
 
     public static void setBarriers(Board myBoard)
     {
-	// Handled in Board class
+	// Handled in Board class constructor
     }
 
     private static void defaultSet(Board myBoard, String team)
