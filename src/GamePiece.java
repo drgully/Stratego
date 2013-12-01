@@ -59,11 +59,11 @@ public class GamePiece extends Piece
 	    {
 		return WIN;
 	    }
-	    if(other.getType() == 'B' && super.getType() != 8)
+	    if(other.getType() == 'B' && super.getType() != '8')
 	    {
 		return LOSE;
 	    }
-	    else if(other.getType() == 'B' && super.getType() == 8)
+	    else if(other.getType() == 'B' && super.getType() == '8')
 	    {
 		return WIN;
 	    }
